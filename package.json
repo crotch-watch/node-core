@@ -1,0 +1,19 @@
+{
+  "name": "node-core",
+  "version": "1.0.0",
+  "description": "Understanding Node.js without any other NPM packages.",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Event Emitter",
+    "Buffer"
+  ],
+  "author": "crotch-watch",
+  "license": "ISC",
+  "packageManager": "pnpm@10.6.2",
+  "devDependencies": {
+    "@types/node": "~22.13.10"
+  }
+}
