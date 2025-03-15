@@ -12,17 +12,27 @@ Buffer.allocUnsafe(10) ||
 
   let unsanitized = 0
   buffer.forEach((el) => {
-    if (el !== 0x00) unsanitized++ && console.log(el)
+    if (el !== 0x00) unsanitized++
   })
   console.log("unsanitized elements : ", unsanitized)
 }
 
 {
-  const buffer = Buffer.allocUnsafeSlow(4e9)
+  const buffer = Buffer.allocUnsafe(1e5)
 
   let unsanitized = 0
   buffer.forEach((el) => {
-    if (el !== 0x00) unsanitized++ && console.log(el)
+    if (el !== 0x00) unsanitized++
+  })
+  console.log("unsanitized elements : ", unsanitized)
+}
+
+{
+  const buffer = Buffer.allocUnsafeSlow(1e5)
+
+  let unsanitized = 0
+  buffer.forEach((el) => {
+    if (el !== 0x00) unsanitized++
   })
   console.log("unsanitized elements : ", unsanitized)
 }
