@@ -30,5 +30,3 @@ const { handleError } = require("./utils")
 
   handleError(() => fs.copyFileSync("text.txt", "text-sync.txt"), console.log)
 }
-
-console.log("in")
