@@ -1,3 +1,5 @@
+const { handleError } = require("./utils")
+
 {
   // callback
   const fs = require("node:fs")
@@ -7,34 +9,26 @@
 
 {
   // promises
-  const fsPromises = require("node:fs/promises");
+  const fsPromises = require("node:fs/promises")
 
-  (async () => {
-    try {
-      await fsPromises.copyFile("text.txt", "text-promise.txt")
-    } catch (error) {
-      console.log(error)
-    }
-  })()
+  handleError(
+    async () => await fsPromises.copyFile("text.txt", "text-promise.txt"),
+    console.log
+  )
 }
 
 {
   // promises
   const fsPromises = require("node:fs/promises")
 
-  fsPromises
-    .copyFile("text.txt", "text-promise.txt")
-    .then(/* perform */)
-    .catch(console.log)
+  fsPromises.copyFile("text.txt", "text-promise.txt").catch(console.log)
 }
 
 {
   // synchronous
   const fs = require("node:fs")
 
-  try {
-    fs.copyFileSync("text.txt", "text-sync.txt")
-  } catch (error) {
-    console.log(error)
-  }
+  handleError(() => fs.copyFileSync("text.txt", "text-sync.txt"), console.log)
 }
+
+console.log("in")
