@@ -1,16 +1,15 @@
 const fsPromises = require("node:fs/promises")
 const { Buffer } = require("node:buffer")
 
-const READ = "read"
-const WRITE = "write"
-const DELETE = "delete"
-const CREATE = "create"
-const CHANGE = "CHANGE"
-
-const FILE_PATH =
-  "/home/dev/Workspace/node-core/File-Handling/File-Command/command.txt"
-
 const main = async function () {
+  const WRITE = "write"
+  const DELETE = "delete"
+  const CREATE = "create"
+  const CHANGE = "CHANGE"
+
+  const FILE_PATH =
+    "/home/dev/Workspace/node-core/File-Handling/File-Command/command.txt"
+
   const { open, watch } = fsPromises
 
   const fileHandle = await open(FILE_PATH)
@@ -26,13 +25,12 @@ const main = async function () {
     })
 
     const instruction = content.toString().trim()
-    const START = 0 // beginning of string
 
-    const indexAfterCmd = instruction.indexOf(" ", START)
-    const command = string.slice(START, indexAfterCmd)
+    if (instruction.includes(CREATE)) {
+      const filename = instruction.substring(CREATE.length).trim()
 
-    if (command === WRITE) {
-      console.log("command - write")
+      const createdFileHandle = await open(filename, "w")
+      await createdFileHandle.close()
     }
   })
 
@@ -40,6 +38,7 @@ const main = async function () {
 
   for await (const { eventType } of watcher) {
     if (eventType === "change") {
+      fileHandle.emit(CHANGE)
     }
   }
 }
