@@ -1,6 +1,8 @@
 const fsPromises = require("node:fs/promises")
 const { Buffer } = require("node:buffer")
 
+const { handleError } = require("../utils.js")
+
 const main = async function () {
   const WRITE = "write"
   const DELETE = "delete"
@@ -24,13 +26,22 @@ const main = async function () {
       length: instructionLength
     })
 
-    const instruction = content.toString().trim()
+    const instruction = content.toString()
+    const [command, filename, ...rest] = instruction.split(" ")
 
-    if (instruction.includes(CREATE)) {
-      const filename = instruction.substring(CREATE.length).trim()
+    if (command === CREATE) {
+      handleError(async () => {
+        const createdFileHandle = await open(filename, "w")
+        await createdFileHandle.close()
+      })
+    }
 
-      const createdFileHandle = await open(filename, "w")
-      await createdFileHandle.close()
+    if (command === WRITE) {
+      handleError(async () => {
+        const writeFileHandle = await open(filename, "w")
+        await writeFileHandle.write(rest.join(" "))
+        await writeFileHandle.close()
+      })
     }
   })
 
