@@ -7,10 +7,11 @@ const main = async function () {
   const WRITE = "write"
   const DELETE = "delete"
   const CREATE = "create"
-  const CHANGE = "CHANGE"
+  const CHANGE = "change"
+  const RENAME = "rename"
 
   const FILE_PATH =
-    "/home/dev/Workspace/node-core/File-Handling/File-Command/command.txt"
+    "D:\\Workspace\\WebstormProjects\\node-core\\File-Handling\\File-Command\\command.txt"
 
   const { open, watch } = fsPromises
 
@@ -41,6 +42,23 @@ const main = async function () {
         const writeFileHandle = await open(filename, "w")
         await writeFileHandle.write(rest.join(" "))
         await writeFileHandle.close()
+      })
+    }
+
+    if(command === DELETE) {
+      const { unlink } = fsPromises
+
+      handleError(async () => {
+        await unlink(filename)
+        console.log(filename, " deleted")
+      })
+    }
+
+    if(command === RENAME) {
+      const { rename } = fsPromises
+      handleError(async () => {
+        await rename(filename, rest[0])
+        console.log(filename, " renamed")
       })
     }
   })
