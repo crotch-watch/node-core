@@ -1,7 +1,12 @@
 const fsPromises = require("node:fs/promises")
-const { Buffer } = require("node:buffer")
 
-const { handleError } = require("../utils.js")
+const {
+  handleCreation,
+  handleDeletion,
+  handleRename,
+  handleWrite,
+  getInstruction
+} = require("./handlers")
 
 const main = async function () {
   const WRITE = "write"
@@ -17,51 +22,19 @@ const main = async function () {
 
   const fileHandle = await open(FILE_PATH)
 
-  fileHandle.on(CHANGE, async () => {
-    const { size: instructionLength } = await fileHandle.stat()
-    const FROM_START = 0
+  fileHandle
+    .on(CHANGE, async () => {
+      const { command, filename, arg } = await getInstruction(fileHandle)
 
-    const { buffer: content } = await fileHandle.read({
-      buffer: Buffer.allocUnsafe(instructionLength),
-      position: FROM_START,
-      length: instructionLength
+      if (command === CREATE) fileHandle.emit(CREATE, filename)
+      if (command === WRITE) fileHandle.emit(WRITE, filename, arg)
+      if (command === DELETE) fileHandle.emit(DELETE, filename)
+      if (command === RENAME) fileHandle.emit(RENAME, filename, arg)
     })
-
-    const instruction = content.toString()
-    const [command, filename, ...rest] = instruction.split(" ")
-
-    if (command === CREATE) {
-      handleError(async () => {
-        const createdFileHandle = await open(filename, "w")
-        await createdFileHandle.close()
-      })
-    }
-
-    if (command === WRITE) {
-      handleError(async () => {
-        const writeFileHandle = await open(filename, "w")
-        await writeFileHandle.write(rest.join(" "))
-        await writeFileHandle.close()
-      })
-    }
-
-    if(command === DELETE) {
-      const { unlink } = fsPromises
-
-      handleError(async () => {
-        await unlink(filename)
-        console.log(filename, " deleted")
-      })
-    }
-
-    if(command === RENAME) {
-      const { rename } = fsPromises
-      handleError(async () => {
-        await rename(filename, rest[0])
-        console.log(filename, " renamed")
-      })
-    }
-  })
+    .on(WRITE, handleWrite)
+    .on(DELETE, handleDeletion)
+    .on(CREATE, handleCreation)
+    .on(RENAME, handleRename)
 
   const watcher = watch(FILE_PATH)
 
