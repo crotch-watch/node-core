@@ -6,7 +6,7 @@ module.exports.handleError = function (callback, onError = console.log) {
   if (async) return callback().catch(onError)
 
   try {
-    callback()
+    return callback()
   } catch (error) {
     onError(error)
   }
