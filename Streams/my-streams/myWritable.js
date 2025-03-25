@@ -1,8 +1,8 @@
 const { Writable } = require("node:stream")
-const { open, write } = require("node:fs")
+const { open, write, close } = require("node:fs")
 
 class myWritable extends Writable {
-  flag = "r"
+  flag = "w"
   fd = null
   chunks = []
   chunkSize = 0
@@ -45,6 +45,27 @@ class myWritable extends Writable {
       this.chunks = []
     })
   }
+
+  _final(callback) {
+    write(this.fd, Buffer.concat(this.chunks), (err) => {
+      if (err) return callback(err)
+
+      this.chunks = []
+      this.chunkSize = 0
+      callback()
+    })
+  }
+
+  _destroy(error, callback) {
+    if (error) return callback(error)
+    if (!this.fd) return
+
+    close(this.fd, (errorWhileClosing) => {
+      if (error) return callback(errorWhileClosing)
+
+      console.log("Underlying resource", this.filename, "has been closed")
+    })
+  }
 }
 
 const stream = new myWritable({
@@ -53,3 +74,9 @@ const stream = new myWritable({
 })
 
 stream.write("Hello World!")
+stream.end(" Bye World!")
+
+stream.on("finish", () => {
+  console.log("Finish Emitted")
+  stream.destroy()
+})
