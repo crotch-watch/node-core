@@ -8,7 +8,9 @@
   },
   "keywords": [
     "Event Emitter",
-    "Buffer"
+    "Buffer",
+    "File System",
+    "Streams"
   ],
   "author": "crotch-watch",
   "license": "ISC",
