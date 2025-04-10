@@ -18,3 +18,9 @@ client.on("connect", async () => {
   const message = await rl.question("enter a message > ")
   client.write(message)
 })
+
+client.on("data", async (chunk) => {
+  console.log(chunk.toString())
+  const message = await rl.question("enter a message > ")
+  client.write(message)
+})
