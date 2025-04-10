@@ -3,12 +3,18 @@ const { PORT, HOST } = require("./constants")
 
 const server = net.createServer()
 
-server.on("connection", (socket) => {
-    console.log("new connection", socket.address())
+const connections = []
 
-    socket.on("data", chunk => {
-        console.log(chunk.toString())
-    })
+server.on("connection", (socket) => {
+  console.log("new connection", socket.address())
+
+  // collect socket to ref. later
+  connections.push(socket)
+
+  socket.on("data", (chunk) => {
+    // writing on all sockets in collection
+    connections.forEach((connection) => connection.write(chunk))
+  })
 })
 
 server.listen(PORT, HOST, () => {
