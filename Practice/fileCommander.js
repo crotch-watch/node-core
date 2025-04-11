@@ -10,8 +10,9 @@ const RENAME = "rename"
 const APPEND_FLAG = "a"
 
 const main = async function () {
-    try {
-        const readHandle = await fs.open(commandFile)
+    const readHandle = await fs.open(commandFile)
+
+    readHandle.on("change", async () => {
         const {size: fileSizeBytes} = await readHandle.stat()
 
         const {
@@ -49,10 +50,11 @@ const main = async function () {
             console.log(oldFileName, " renamed to ", rest.join(" "))
         })
         if (instruction === RENAME) return readHandle.emit(RENAME)
+    })
 
-        await readHandle.close()
-    } catch (error) {
-        console.error("ERROR =>", error)
+    const watcher = await fs.watch(commandFile)
+    for await (const {eventType} of watcher) {
+        if (eventType === "change") readHandle.emit(eventType)
     }
 }
 
