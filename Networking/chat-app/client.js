@@ -13,14 +13,44 @@ const rl = readline.createInterface({
   output: process.stdout
 })
 
+const moveCursor = (dx, dy) => {
+  return new Promise((resolve) => {
+    process.stdout.moveCursor(dx, dy, resolve)
+  })
+}
+
+const moveCursorUpBy = (dy) => {
+  return moveCursor(0, -dy)
+}
+
+const clearCursor = (dir) => {
+  return new Promise((resolve) => {
+    process.stdout.clearLine(dir, resolve)
+  })
+}
+
+const clearCurrentLine = () => {
+  return clearCursor(0)
+}
+
+const ask = async (client, question = "enter a message => ") => {
+  const message = await rl.question(question)
+  client.write(message)
+  await moveCursorUpBy(1)
+  await clearCurrentLine()
+}
+
+const boundAsk = ask.bind(null, client)
+
 client.on("connect", async () => {
   console.log("Connected")
-  const message = await rl.question("enter a message > ")
-  client.write(message)
+  boundAsk()
 })
 
 client.on("data", async (chunk) => {
+  console.log()
+  await moveCursorUpBy(1)
+  await clearCurrentLine()
   console.log(chunk.toString())
-  const message = await rl.question("enter a message > ")
-  client.write(message)
+  boundAsk()
 })
