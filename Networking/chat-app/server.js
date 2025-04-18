@@ -6,14 +6,20 @@ const server = net.createServer()
 const connections = []
 
 server.on("connection", (socket) => {
-  console.log("new connection", socket.address())
+  console.log("new connection")
+
+  // assign id to user based on se  sequence of joining
+  const id = connections.length + 1
+  const user = { id, socket }
 
   // collect socket to ref. later
-  connections.push(socket)
+  connections.push(user)
 
   socket.on("data", (chunk) => {
     // writing on all sockets in collection
-    connections.forEach((connection) => connection.write(chunk))
+    connections.forEach((user) =>
+      user.socket.write(JSON.stringify({ id, message: chunk.toString() }))
+    )
   })
 })
 
