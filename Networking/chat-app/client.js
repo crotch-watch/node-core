@@ -48,9 +48,11 @@ client.on("connect", async () => {
 })
 
 client.on("data", async (chunk) => {
+  const { id, message } = JSON.parse(chunk)
+
   console.log()
   await moveCursorUpBy(1)
   await clearCurrentLine()
-  console.log(chunk.toString())
+  console.log(`user ${id} -> ${message}`)
   boundAsk()
 })
