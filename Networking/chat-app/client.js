@@ -50,9 +50,14 @@ client.on("connect", async () => {
 client.on("data", async (chunk) => {
   const { id, message } = JSON.parse(chunk)
 
+  let status = "message"
+  if (message.includes("joined")) status = "joined"
+  if (message.includes("left")) status = "left"
+
   console.log()
   await moveCursorUpBy(1)
   await clearCurrentLine()
-  console.log(`user ${id} -> ${message}`)
+  if (status === "message") console.log(`user ${id} -> ${message}`)
+  else console.log(message)
   boundAsk()
 })
