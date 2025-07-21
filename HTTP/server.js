@@ -25,7 +25,7 @@ server.on('request', (req, _res) => {
 
   /**
   * NOTE: how node:http implements req, res
-  * 1.when a req hits the server the raw binary data is parsed into HTTP meta data using http parser
+  * 1.when a req hits the server the raw binary data is parsed into HTTP metadata using http parser
   * 2. new stream instances are created for both req. readable and res. writable.
   * 3. additional HTTP metadata and helpers are appended to these obj.
   * 4. these are made available to consume via callbacks params.
@@ -49,3 +49,13 @@ const HOSTNAME = '127.0.0.1'
 server.listen(PORT, HOSTNAME, () => {
 	console.info(`server listening @http://${HOSTNAME}:${PORT}`)
 })
+
+/**
+ * NOTE: how HTTP works
+ * 1. unline in a simple TCP connection in HTTP server first needs a request from a client in order to send response.
+ * 2. TCP is a FULL DUPLEX socket any of the connections or server can read or write to it.
+ * 3. HTTP requires a request from a client in order to send some data to it.
+ * 4. STEP 1: client sends a TCP segment to the server including HEADLINE and the HEADERS.
+ * 5. STEP 2: server can send data to client which is also a TCP segment but STATUS CODE and HEADERS.
+ * STATUS CODE concisely tells how the request was interpreted by the server.
+ */
